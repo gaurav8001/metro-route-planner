@@ -10,7 +10,7 @@ const initialStations = [
   { id: 4, name: "Station E", line: 3 },
   { id: 5, name: "Station F", line: 3 },
   { id: 6, name: "Station G", line: 1 },
-
+];
 
 const graph = Array.from({ length: 7 }, () => []);
 graph[0].push({ destination: 1, distance: 10, cost: 50 });
@@ -29,6 +29,7 @@ graph[5].push({ destination: 3, distance: 20, cost: 10 });
 graph[5].push({ destination: 4, distance: 10, cost: 10 });
 graph[5].push({ destination: 6, distance: 15, cost: 20 });
 
+// Dijkstra's Algorithm (Shortest Path by Distance)
 function dijkstra(source, destination) {
   const n = graph.length;
   const dist = Array(n).fill(Infinity);
@@ -58,9 +59,11 @@ function dijkstra(source, destination) {
   for (let at = destination; at !== -1; at = parent[at]) {
     path.push(at);
   }
-  return [path.reverse(), cost[destination]];
+  path.reverse();
+  return [path, cost[destination]];
 }
 
+// BFS-like for Cheapest Path (minimal cost with distance as secondary)
 function bfs(source, destination) {
   const n = graph.length;
   const dist = Array(n).fill(Infinity);
@@ -76,6 +79,7 @@ function bfs(source, destination) {
       const v = edge.destination;
       const d = dist[u] + edge.distance;
       const c = cost[u] + edge.cost;
+      // Relax edge based on distance first, then cost
       if (d < dist[v] || (d === dist[v] && c < cost[v])) {
         dist[v] = d;
         cost[v] = c;
@@ -89,10 +93,12 @@ function bfs(source, destination) {
   for (let at = destination; at !== -1; at = parent[at]) {
     path.push(at);
   }
-  return [path.reverse(), cost[destination]];
+  path.reverse();
+  return [path, cost[destination]];
 }
 
-function dfsUtil(u, dest, visited, path, bestPath, bestDistance, bestCost, currCost) {
+// DFS Utility to find Best Path by shortest number of stations (minimum stops)
+function dfsUtil(u, dest, visited, path, bestPath, bestCost, currCost) {
   visited[u] = true;
   path.push(u);
 
@@ -104,7 +110,7 @@ function dfsUtil(u, dest, visited, path, bestPath, bestDistance, bestCost, currC
   } else {
     for (let edge of graph[u]) {
       if (!visited[edge.destination]) {
-        dfsUtil(edge.destination, dest, visited, path, bestPath, bestDistance, bestCost, currCost + edge.cost);
+        dfsUtil(edge.destination, dest, visited, path, bestPath, bestCost, currCost + edge.cost);
       }
     }
   }
@@ -117,9 +123,8 @@ function dfs(source, destination) {
   const visited = Array(graph.length).fill(false);
   const path = [];
   const bestPath = { path: [] };
-  const bestDistance = { value: Infinity };
   const bestCost = { value: Infinity };
-  dfsUtil(source, destination, visited, path, bestPath, bestDistance, bestCost, 0);
+  dfsUtil(source, destination, visited, path, bestPath, bestCost, 0);
   return [bestPath.path, bestCost.value];
 }
 
@@ -150,15 +155,50 @@ const App = () => {
 
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         <div className="flex flex-wrap items-center gap-4 justify-center">
-          <select className="p-2 border rounded" value={source} onChange={(e) => setSource(parseInt(e.target.value))}>
-            {stations.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
+          <select
+            className="p-2 border rounded"
+            value={source}
+            onChange={(e) => setSource(parseInt(e.target.value))}
+          >
+            {stations.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
           </select>
-          <select className="p-2 border rounded" value={destination} onChange={(e) => setDestination(parseInt(e.target.value))}>
-            {stations.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
+
+          <select
+            className="p-2 border rounded"
+            value={destination}
+            onChange={(e) => setDestination(parseInt(e.target.value))}
+          >
+            {stations.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
           </select>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => handlePath("shortest")}>Shortest Path</button>
-          <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => handlePath("cheapest")}>Cheapest Path</button>
-          <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700" onClick={() => handlePath("best")}>Best Path (DFS)</button>
+
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={() => handlePath("shortest")}
+          >
+            Shortest Path
+          </button>
+
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            onClick={() => handlePath("cheapest")}
+          >
+            Cheapest Path
+          </button>
+
+          <button
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+            onClick={() => handlePath("best")}
+          >
+            Best Path (DFS)
+          </button>
         </div>
 
         <ReactFlowProvider>
@@ -167,7 +207,8 @@ const App = () => {
 
         {selectedPath.length > 0 && (
           <p className="text-center text-lg mt-4">
-            <strong>{pathType.charAt(0).toUpperCase() + pathType.slice(1)} Path</strong>: {selectedPath.map((id) => stations[id].name).join(" → ")} <br />
+            <strong>{pathType.charAt(0).toUpperCase() + pathType.slice(1)} Path</strong>:{" "}
+            {selectedPath.map((id) => stations[id].name).join(" → ")} <br />
             <strong>Total Cost</strong>: ₹{totalCost}
           </p>
         )}
