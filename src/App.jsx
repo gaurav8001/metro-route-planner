@@ -3,32 +3,31 @@ import MetroGraph from "./components/MetroGraph.jsx";
 import { ReactFlowProvider } from "reactflow";
 
 const initialStations = [
-  { id: 0, name: "Raddison Square", line: 1 },
-  { id: 1, name: "Airport", line: 1 },
-  { id: 2, name: "Bhanwar Kuwa", line: 1 },
-  { id: 3, name: "Rajwada", line: 1 },
-  { id: 4, name: "Palasia", line: 1 },
-  { id: 5, name: "MR 10", line: 1 },
-  { id: 6, name: "Vijay Nagar", line: 1 },
-];
+  { id: 0, name: "Station A", line: 1 },
+  { id: 1, name: "Station B", line: 1 },
+  { id: 2, name: "Station C", line: 2 },
+  { id: 3, name: "Station D", line: 2 },
+  { id: 4, name: "Station E", line: 3 },
+  { id: 5, name: "Station F", line: 3 },
+  { id: 6, name: "Station G", line: 1 },
+
 
 const graph = Array.from({ length: 7 }, () => []);
-
-// Connections (dummy values based on reasonable approximations)
-graph[0].push({ destination: 1, distance: 4, cost: 10 });  // Gandhi Nagar → Airport
-graph[1].push({ destination: 2, distance: 6, cost: 15 });  // Airport → Bhanwar Kuwa
-graph[2].push({ destination: 3, distance: 5, cost: 12 });  // Bhanwar Kuwa → Rajwada
-graph[3].push({ destination: 4, distance: 3, cost: 8 });   // Rajwada → Palasia
-graph[4].push({ destination: 5, distance: 5, cost: 10 });  // Palasia → MR 10
-graph[5].push({ destination: 6, distance: 4, cost: 10 });  // MR 10 → Vijay Nagar
-
-// Optional reverse paths (bidirectional metro)
-graph[1].push({ destination: 0, distance: 4, cost: 10 });
-graph[2].push({ destination: 1, distance: 6, cost: 15 });
-graph[3].push({ destination: 2, distance: 5, cost: 12 });
-graph[4].push({ destination: 3, distance: 3, cost: 8 });
-graph[5].push({ destination: 4, distance: 5, cost: 10 });
-graph[6].push({ destination: 5, distance: 4, cost: 10 });
+graph[0].push({ destination: 1, distance: 10, cost: 50 });
+graph[0].push({ destination: 2, distance: 20, cost: 30 });
+graph[1].push({ destination: 2, distance: 5, cost: 10 });
+graph[1].push({ destination: 3, distance: 15, cost: 40 });
+graph[2].push({ destination: 1, distance: 5, cost: 20 });
+graph[2].push({ destination: 3, distance: 10, cost: 25 });
+graph[2].push({ destination: 4, distance: 20, cost: 50 });
+graph[3].push({ destination: 2, distance: 10, cost: 10 });
+graph[3].push({ destination: 5, distance: 20, cost: 30 });
+graph[4].push({ destination: 2, distance: 20, cost: 30 });
+graph[4].push({ destination: 5, distance: 10, cost: 20 });
+graph[4].push({ destination: 6, distance: 5, cost: 10 });
+graph[5].push({ destination: 3, distance: 20, cost: 10 });
+graph[5].push({ destination: 4, distance: 10, cost: 10 });
+graph[5].push({ destination: 6, distance: 15, cost: 20 });
 
 function dijkstra(source, destination) {
   const n = graph.length;
